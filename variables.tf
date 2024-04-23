@@ -20,9 +20,9 @@ variable "layer_name" {
 variable "nodejs_runtime" {
   type        = string
   default     = "nodejs20.x"
-  description = "Runtime identifier for the Lambda Layer. eg. nodejs20.x, nodejs18.x, nodejs16.x"
+  description = "Runtime identifier for the Lambda Layer. eg. nodejs20.x, nodejs18.x"
   validation {
-    condition     = contains(["nodejs20.x", "nodejs18.x", "nodejs16.x", null], var.nodejs_runtime)
+    condition     = contains(["nodejs20.x", "nodejs18.x", null], var.nodejs_runtime)
     error_message = "Unsupported runtime <${var.nodejs_runtime}>"
   }
 }
