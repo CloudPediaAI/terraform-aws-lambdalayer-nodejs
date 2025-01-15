@@ -1,5 +1,5 @@
 locals {
-  nodejs_runtimes   = ["nodejs20.x", "nodejs18.x"]
+  nodejs_runtimes   = ["nodejs22.x","nodejs20.x", "nodejs18.x"]
   lambda_layer_name = (var.layer_name == "null") ? "lib-nodejs-${var.library_name}" : var.layer_name
   lambda_runtime    = contains(local.nodejs_runtimes, var.nodejs_runtime) ? var.nodejs_runtime : local.nodejs_runtimes[0]
 }
