@@ -5,12 +5,12 @@ locals {
 }
 
 locals {
-  temp_folder    = "${path.module}\\lambdalayer"
-  package_file   = "${local.temp_folder}\\nodejs-${var.library_name}.zip"
+  temp_folder    = "${path.module}/lambdalayer"
+  package_file   = "${local.temp_folder}/nodejs-${var.library_name}.zip"
 
-  package_source = "${local.temp_folder}\\${var.library_name}"
-  project_folder = "${local.package_source}\\nodejs"
-  metadata_file  = "${local.project_folder}\\package.json"
+  package_source = "${local.temp_folder}/${var.library_name}"
+  project_folder = "${local.package_source}/nodejs"
+  metadata_file  = "${local.project_folder}/package.json"
 }
 
 # create folders and a dummy file
