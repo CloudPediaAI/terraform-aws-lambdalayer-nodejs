@@ -5,7 +5,7 @@ locals {
 }
 
 locals {
-  temp_folder    = "lambdalayer"
+  temp_folder    = "${path.module}\\lambdalayer"
   package_file   = "${local.temp_folder}\\nodejs-${var.library_name}.zip"
 
   package_source = "${local.temp_folder}\\${var.library_name}"
