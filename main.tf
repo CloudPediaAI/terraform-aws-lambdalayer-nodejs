@@ -1,16 +1,17 @@
 locals {
-  nodejs_runtimes   = ["nodejs22.x","nodejs20.x", "nodejs18.x"]
+  nodejs_runtimes   = ["nodejs24.x", "nodejs22.x", "nodejs20.x"]
   lambda_layer_name = (var.layer_name == "null") ? "lib-nodejs-${var.library_name}" : var.layer_name
   lambda_runtime    = contains(local.nodejs_runtimes, var.nodejs_runtime) ? var.nodejs_runtime : local.nodejs_runtimes[0]
 }
 
 locals {
-  temp_folder    = "${path.module}/lambdalayer"
-  package_file   = "${local.temp_folder}/nodejs-${var.library_name}.zip"
+  temp_folder  = "lambdalayer"
+  package_file = "${local.temp_folder}/nodejs-${var.library_name}.zip"
 
   package_source = "${local.temp_folder}/${var.library_name}"
-  project_folder = "${local.package_source}/nodejs"
-  metadata_file  = "${local.project_folder}/package.json"
+  project_folder = local.package_source
+  # project_folder = "${local.package_source}/nodejs"
+  metadata_file = "${local.project_folder}/package.json"
 }
 
 # create folders and a dummy file
@@ -70,7 +71,7 @@ data "archive_file" "create_package" {
   count = fileexists(pathexpand(local.package_file)) ? 0 : 1
 
   type        = "zip"
-  source_dir  = local.package_source
+  source_dir  = "${path.module}/${local.package_source}"
   output_path = local.package_file
 }
 
