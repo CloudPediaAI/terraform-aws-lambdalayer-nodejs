@@ -5,13 +5,9 @@ locals {
 }
 
 locals {
-  temp_folder  = "lambdalayer"
-  package_file = "${local.temp_folder}/nodejs-${var.library_name}.zip"
-
-  package_source = "${local.temp_folder}/${var.library_name}"
-  project_folder = local.package_source
-  # project_folder = "${local.package_source}/nodejs"
+  project_folder = "${path.module}/lambdalayer/${var.library_name}"
   metadata_file = "${local.project_folder}/package.json"
+  package_file = "${local.project_folder}/nodejs-${var.library_name}.zip"
 }
 
 # create folders and a dummy file
@@ -35,7 +31,7 @@ EOF
 # waiting to get the folders and dummy file created
 resource "time_sleep" "until_folder_creation" {
   depends_on      = [local_file.package_json]
-  create_duration = "1s"
+  create_duration = "10s"
 }
 
 # installing Node.js library
@@ -60,7 +56,7 @@ resource "null_resource" "install_nodejs_library" {
 # waiting until library installation completes
 resource "time_sleep" "until_install_completion" {
   depends_on      = [null_resource.install_nodejs_library]
-  create_duration = "10s"
+  create_duration = "20s"
 }
 
 # create package to upload to Lambda Layer
@@ -71,7 +67,7 @@ data "archive_file" "create_package" {
   count = fileexists(pathexpand(local.package_file)) ? 0 : 1
 
   type        = "zip"
-  source_dir  = "${path.module}/${local.package_source}"
+  source_dir  = "${local.project_folder}"
   output_path = local.package_file
 }
 

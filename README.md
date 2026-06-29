@@ -21,6 +21,22 @@ When your Lambda need to import libraries, packaing all libraries along with you
 
 # Release Notes
 
+## v1.3.2
+
+### Changes/Updates
+
+- Refactored layer build paths to use an absolute, module-scoped project folder (`${path.module}/lambdalayer/${var.library_name}`) to improve packaging consistency across environments.
+- Updated package artifact location to be generated directly under the library project folder (`nodejs-${var.library_name}.zip`).
+- Updated archive source path to use the resolved project folder so the ZIP is built from the correct directory.
+- Increased provisioning wait time for folder creation to reduce intermittent startup failures (`time_sleep.until_folder_creation`: `1s` -> `10s`).
+- Increased provisioning wait time after dependency installation to improve archive timing reliability (`time_sleep.until_install_completion`: `10s` -> `20s`).
+
+### Input Variable Changes
+None
+
+### Output Variable Changes
+None
+
 ## v1.1.0
 
 ### Changes/Updates
