@@ -6,8 +6,8 @@ locals {
 
 locals {
   project_folder = "${path.module}/lambdalayer/${var.library_name}"
-  metadata_file = "${local.project_folder}/package.json"
-  package_file = "${local.project_folder}/nodejs-${var.library_name}.zip"
+  metadata_file  = "${local.project_folder}/package.json"
+  package_file   = "layer-node-${var.library_name}.zip"
 }
 
 # create folders and a dummy file
@@ -21,7 +21,7 @@ resource "local_file" "package_json" {
   "scripts": {
     "test": "echo test"
   },
-  "author": "TechieInYou",
+  "author": "CloudPediaAI",
   "license": "ISC"
 } 
 EOF
@@ -31,13 +31,16 @@ EOF
 # waiting to get the folders and dummy file created
 resource "time_sleep" "until_folder_creation" {
   depends_on      = [local_file.package_json]
-  create_duration = "10s"
+  create_duration = "5s"
 }
 
 # installing Node.js library
 resource "null_resource" "install_nodejs_library" {
 
-  depends_on = [time_sleep.until_folder_creation]
+  depends_on = [
+    local_file.package_json,
+    time_sleep.until_folder_creation
+  ]
 
   # trigger on timestamp change will make sure local-exec runs always
   triggers = {
@@ -55,25 +58,41 @@ resource "null_resource" "install_nodejs_library" {
 
 # waiting until library installation completes
 resource "time_sleep" "until_install_completion" {
-  depends_on      = [null_resource.install_nodejs_library]
-  create_duration = "20s"
+  depends_on = [
+    local_file.package_json,
+    time_sleep.until_folder_creation,
+    null_resource.install_nodejs_library
+  ]
+
+  create_duration = "10s"
 }
 
 # create package to upload to Lambda Layer
 data "archive_file" "create_package" {
 
-  depends_on = [time_sleep.until_install_completion]
+  depends_on = [
+    local_file.package_json,
+    time_sleep.until_folder_creation,
+    null_resource.install_nodejs_library,
+    time_sleep.until_install_completion
+  ]
 
   count = fileexists(pathexpand(local.package_file)) ? 0 : 1
 
   type        = "zip"
-  source_dir  = "${local.project_folder}"
+  source_dir  = local.project_folder
   output_path = local.package_file
 }
 
 # creates lambda layer
 resource "aws_lambda_layer_version" "nodejs_library" {
-  depends_on          = [data.archive_file.create_package]
+  depends_on = [
+    local_file.package_json,
+    time_sleep.until_folder_creation,
+    null_resource.install_nodejs_library,
+    time_sleep.until_install_completion,
+    data.archive_file.create_package
+  ]
   filename            = local.package_file
   layer_name          = local.lambda_layer_name
   compatible_runtimes = [var.nodejs_runtime]

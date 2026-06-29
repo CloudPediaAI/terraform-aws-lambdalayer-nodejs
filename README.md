@@ -21,6 +21,20 @@ When your Lambda need to import libraries, packaing all libraries along with you
 
 # Release Notes
 
+## v1.3.3
+
+### Changes/Updates
+
+- Added Node.js 24 (nodejs24.x) runtime support for Lambda Layer compatibility with the latest Node.js LTS version.
+- Updated package filename variable to use more descriptive naming (`layer-node-${var.library_name}.zip`).
+- Optimized folder creation wait time for improved provisioning performance (`time_sleep.until_folder_creation`: `10s` -> `5s`).
+
+### Input Variable Changes
+None
+
+### Output Variable Changes
+None
+
 ## v1.3.2
 
 ### Changes/Updates
