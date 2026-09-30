@@ -21,6 +21,20 @@ When your Lambda need to import libraries, packaing all libraries along with you
 
 # Release Notes
 
+## v1.3.4
+
+### Changes/Updates
+
+- Fixed module-consumer path resolution by making the layer ZIP artifact path module-scoped (`${path.module}/layer-node-${var.library_name}.zip`) instead of relative.
+- Updated package existence checks to use the resolved module-scoped artifact path for consistent behavior when called from other repositories.
+- Added dynamic creation of `lambdalayer/${var.library_name}` before writing `package.json`, so any valid `library_name` works without precreating folders.
+
+### Input Variable Changes
+None
+
+### Output Variable Changes
+None
+
 ## v1.3.3
 
 ### Changes/Updates

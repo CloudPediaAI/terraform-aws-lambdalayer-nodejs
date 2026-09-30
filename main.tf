@@ -7,11 +7,24 @@ locals {
 locals {
   project_folder = "${path.module}/lambdalayer/${var.library_name}"
   metadata_file  = "${local.project_folder}/package.json"
-  package_file   = "layer-node-${var.library_name}.zip"
+  package_file   = "${path.module}/layer-node-${var.library_name}.zip"
+}
+
+# ensure per-library project folder exists for any library_name
+resource "null_resource" "create_project_folder" {
+  triggers = {
+    project_folder = local.project_folder
+  }
+
+  provisioner "local-exec" {
+    command = "mkdir ${local.project_folder}"
+  }
 }
 
 # create folders and a dummy file
 resource "local_file" "package_json" {
+  depends_on = [null_resource.create_project_folder]
+
   content  = <<EOF
 {
   "name": "${local.lambda_layer_name}",
@@ -48,7 +61,7 @@ resource "null_resource" "install_nodejs_library" {
   }
 
   # skip this block if the package already exists
-  count = fileexists(pathexpand(local.package_file)) ? 0 : 1
+  count = fileexists(local.package_file) ? 0 : 1
 
   # install Node.js library
   provisioner "local-exec" {
@@ -77,7 +90,7 @@ data "archive_file" "create_package" {
     time_sleep.until_install_completion
   ]
 
-  count = fileexists(pathexpand(local.package_file)) ? 0 : 1
+  count = fileexists(local.package_file) ? 0 : 1
 
   type        = "zip"
   source_dir  = local.project_folder

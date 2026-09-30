@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.4] - 2026-09-29
+
+### Fixed
+- Resolved module-consumer path issues by making the layer ZIP artifact path module-scoped (`${path.module}/layer-node-${var.library_name}.zip`) instead of relying on a relative path
+- Updated package existence checks to use the resolved module-scoped artifact path for consistent behavior when the module is called from other repositories
+
+### Added
+- Dynamic per-library folder creation for `lambdalayer/${var.library_name}` before writing `package.json`, so any valid `library_name` works without precreating folders
+
 ## [1.3.3] - 2026-06-28
 
 ### Added
