@@ -5,6 +5,7 @@ locals {
 }
 
 locals {
+  project_folder_parent = "${path.module}/lambdalayer"
   project_folder = "${path.module}/lambdalayer/${var.library_name}"
   metadata_file  = "${local.project_folder}/package.json"
   package_file   = "${path.module}/layer-node-${var.library_name}.zip"
@@ -17,7 +18,8 @@ resource "null_resource" "create_project_folder" {
   }
 
   provisioner "local-exec" {
-    command = "mkdir ${local.project_folder}"
+    # command = "cd ${path.module} && mkdir ${local.project_folder_parent} && cd ${local.project_folder_parent} && mkdir ${var.library_name}"
+    command = "cd ${path.module} && mkdir lambdalayer && cd lambdalayer && mkdir ${var.library_name}"
   }
 }
 
